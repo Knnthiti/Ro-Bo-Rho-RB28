@@ -12,21 +12,7 @@ public:
   boolean move[4];
   boolean attack[8];
   boolean seting[2];
-  int8_t stickValues[4];
-
-  boolean prevMove[4] = {0, 0, 0, 0};
-  boolean prevStartState = false;
-  boolean prevModeState = false;
-
-  struct ControllerState {
-    int16_t xCount;
-    int16_t yCount;
-    bool start;
-    uint8_t mode;
-    uint8_t servo1;
-    uint8_t servo2;
-    int16_t stick[4];
-  } state;
+  uint8_t stickValues[4];
 
   uint8_t error = 1;
   uint8_t type = 0;
@@ -36,7 +22,7 @@ public:
     boolean move[4];
     boolean attack[8];
     boolean seting[2];
-    int8_t stickValues[4];
+    uint8_t stickValues[4];
   } Str_PS2;
 
   Joy() {}

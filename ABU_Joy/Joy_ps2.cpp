@@ -48,90 +48,65 @@ byte Joy ::PS2_type() {
 void Joy::PS2_readValue() {
   if (type == 1) {
     read_gamepad(false, vibrate);
-    Str_PS2.move[0] = Button(PSB_PAD_UP);
-    Str_PS2.move[1] = Button(PSB_PAD_RIGHT);
-    Str_PS2.move[2] = Button(PSB_PAD_DOWN);
-    Str_PS2.move[3] = Button(PSB_PAD_LEFT);
-
-    if (prevMove[0] == 1 && Str_PS2.move[0] == 0) state.xCount += 10;
-    if (prevMove[2] == 1 && Str_PS2.move[2] == 0) state.xCount -= 10;
-    if (prevMove[1] == 1 && Str_PS2.move[1] == 0) state.yCount -= 10;
-    if (prevMove[3] == 1 && Str_PS2.move[3] == 0) state.yCount += 10;
-
-    if (state.xCount > 500) {
-      state.xCount = 500;
-    } else if (state.xCount < -500) {
-      state.xCount = -500;
-    }
-
-    if (state.yCount > 500) {
-      state.yCount = 500;
-    } else if (state.yCount < -500) {
-      state.yCount = -500;
-    }
+    Str_PS2.move[0] = ButtonPressed(PSB_PAD_UP);
+    Str_PS2.move[1] = ButtonPressed(PSB_PAD_RIGHT);
+    Str_PS2.move[2] = ButtonPressed(PSB_PAD_DOWN);
+    Str_PS2.move[3] = ButtonPressed(PSB_PAD_LEFT);
 
     Str_PS2.attack[0] = Button(PSB_GREEN);
     Str_PS2.attack[1] = Button(PSB_RED);
-    Str_PS2.attack[2] = Button(PSB_PINK);
+    Str_PS2.attack[2] = ButtonPressed(PSB_PINK);
     Str_PS2.attack[3] = Button(PSB_BLUE);
+    Str_PS2.attack[4] = Button(PSB_L1);
+    Str_PS2.attack[5] = ButtonPressed(PSB_R1);
+    Str_PS2.attack[6] = Button(PSB_L2);
+    Str_PS2.attack[7] = Button(PSB_R2);
 
-    if (Str_PS2.attack[0]) state.servo1 = min(state.servo1 + 1, 10);
-    if (Str_PS2.attack[3]) state.servo1 = max(state.servo1 - 1, 0);
-    if (Str_PS2.attack[1]) state.servo2 = min(state.servo2 + 1, 10);
-    if (Str_PS2.attack[2]) state.servo2 = max(state.servo2 - 1, 0);
+    Str_PS2.seting[0] = ButtonPressed(PSB_SELECT);
+    Str_PS2.seting[1] = Button(PSB_START);
 
-    // Toggle `start` status on/off with the START button
-    Str_PS2.seting[0] = ButtonPressed(PSB_START);
-    if (Str_PS2.seting[0] && !prevStartState) {
-      state.start = !state.start;  // Toggle between on and off
-    }
-    prevStartState = Str_PS2.seting[0];
+    vibrate = Analog(PSAB_BLUE);
 
-    // Cycle `mode` through 3 statuses with the SELECT button
-    Str_PS2.seting[1] = ButtonPressed(PSB_SELECT);
-    if (Str_PS2.seting[1] && !prevModeState) {
-      state.mode = (state.mode + 1) % 2;  // Cycle through 0, 1
-    }
-    prevModeState = Str_PS2.seting[1];
-
-    // state.stick[0] = map(Analog(PSS_LX), 255, 0, -100, 100);
-    // state.stick[1] = map(Analog(PSS_LY), 255, 0, -100, 100);
-    // state.stick[2] = map(Analog(PSS_RY), 255, 0, 100, -100);
-    // state.stick[3] = map(Analog(PSS_RX), 255, 0, -100, 100);
-
-    state.stick[0] = Analog(PSS_LX);
-    state.stick[1] = Analog(PSS_LY);
-    state.stick[2] = Analog(PSS_RY);
-    state.stick[3] = Analog(PSS_RX);
-
-    structToArray();
+    // Str_PS2.stickValues[0] = map(Analog(PSS_LY), 255, 0, -128, 127);
+    // Str_PS2.stickValues[1] = map(Analog(PSS_LX), 255, 0, -128, 127);
+    // Str_PS2.stickValues[3] = map(Analog(PSS_RY), 255, 0, -128, 127);
+    // Str_PS2.stickValues[2] = map(Analog(PSS_RX), 255, 0, -128, 127);
+    
+    Str_PS2.stickValues[1] = Analog(PSS_LY);
+    Str_PS2.stickValues[0] = Analog(PSS_LX);
+    Str_PS2.stickValues[2] = Analog(PSS_RY);
+    Str_PS2.stickValues[3] = Analog(PSS_RX);
   }
+
+  structToArray();
 }
 
 void Joy::print_PS2() {
-  prevStartState = Str_PS2.seting[1];
-  for (int i = 0; i < 4; ++i) prevMove[i] = Str_PS2.move[i];
-  Serial.print("xCount: ");
-  Serial.print(state.xCount);
-  Serial.print(" | yCount: ");
-  Serial.print(state.yCount);
-  Serial.print(" | servo1: ");
-  Serial.print(state.servo1);
-  Serial.print(" | servo2: ");
-  Serial.print(state.servo2);
-  Serial.print(" | start: ");
-  Serial.print(state.start ? "On" : "Off");
-  Serial.print(" | mode: ");
-  Serial.print(state.mode);
+  Serial.print("move ");
+  for (int i = 0; i < 4; ++i) {
+    Serial.print(move[i]);
+    Serial.print(" ");
+  }
 
-  Serial.print(" LY: ");
-  Serial.print(state.stick[0]);
-  Serial.print(" ,LX: ");
-  Serial.print(state.stick[1]);
-  Serial.print(" ,RY: ");
-  Serial.print(state.stick[2]);
-  Serial.print(" ,RX: ");
-  Serial.println(state.stick[3]);
+  Serial.print(" attack ");
+  for (int i = 0; i < 8; ++i) {
+    Serial.print(attack[i]);
+    Serial.print(" ");
+  }
+
+  Serial.print(" seting ");
+  for (int i = 0; i < 2; ++i) {
+    Serial.print(seting[i]);
+    Serial.print(" ");
+  }
+
+  Serial.print(" stickValues ");
+  for (int i = 0; i < 4; ++i) {
+    Serial.print(stickValues[i]);
+    Serial.print(" ");
+  }
+
+  Serial.println(" ");
 }
 
 void Joy::set_PS2_0() {
