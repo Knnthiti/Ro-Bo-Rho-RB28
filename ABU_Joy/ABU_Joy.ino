@@ -55,6 +55,6 @@ void loop() {
     lcd.print(Joy.Str_PS2.stickValues[3]);
 
     Joy.Sendvalue_ESPNOW((uint8_t*)&Joy.Str_PS2, sizeof(Joy.Str_PS2));
-    delay(10);
+    // delay(10);
   }
 }

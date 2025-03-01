@@ -55,15 +55,15 @@ void Joy::PS2_readValue() {
 
     Str_PS2.attack[0] = Button(PSB_GREEN);
     Str_PS2.attack[1] = Button(PSB_RED);
-    Str_PS2.attack[2] = ButtonPressed(PSB_PINK);
+    Str_PS2.attack[2] = Button(PSB_PINK);
     Str_PS2.attack[3] = Button(PSB_BLUE);
     Str_PS2.attack[4] = Button(PSB_L1);
-    Str_PS2.attack[5] = ButtonPressed(PSB_R1);
+    Str_PS2.attack[5] = Button(PSB_R1);
     Str_PS2.attack[6] = Button(PSB_L2);
     Str_PS2.attack[7] = Button(PSB_R2);
 
     Str_PS2.seting[0] = ButtonPressed(PSB_SELECT);
-    Str_PS2.seting[1] = Button(PSB_START);
+    Str_PS2.seting[1] = 1-Button(PSB_START);
 
     vibrate = Analog(PSAB_BLUE);
 
@@ -187,6 +187,6 @@ void ABU_Joy ::Joy_Sendvalue_ESPNOW() {
     Serial.println(" | Sending error");
 #endif
   }
-  delay(10);  //COMMUNICATION
+  delay(5);  //COMMUNICATION
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
