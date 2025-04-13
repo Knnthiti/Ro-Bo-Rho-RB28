@@ -9,13 +9,13 @@
 // OLED Display object
 Adafruit_SH1106G display = Adafruit_SH1106G(128, 64, &Wire);
 
-// uint8_t broadAddress[6] = { 0x34, 0xB7, 0xDA, 0x52, 0xF3, 0xBC };
-uint8_t broadAddress[6] = { 0xF4, 0x65, 0x0B, 0x55, 0xD0, 0xCC };
+uint8_t broadAddress[6] = { 0x34, 0xB7, 0xDA, 0x52, 0xF3, 0xBC };
+// uint8_t broadAddress[6] = { 0xF4, 0x65, 0x0B, 0x55, 0xD0, 0xCC };
 ESPNOW_ROBOT joy(broadAddress);
 
 
 typedef struct __attribute__((packed)) {
-  uint8_t Header[2] = {68 ,56};
+  uint8_t Header[2] = {'R' ,'B'};
 
   union {
     uint8_t moveBtnByte;
@@ -47,7 +47,7 @@ typedef struct __attribute__((packed)) {
 
 ControllerData data;
 
-// int16_t value_[4] = { 0 };
+int16_t value_[4] = { 0 };
 
 void setup() {
   //setup_ADC

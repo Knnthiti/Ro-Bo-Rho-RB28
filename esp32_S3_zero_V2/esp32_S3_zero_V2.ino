@@ -2,6 +2,8 @@
 
 ESPNOW_ROBOT ROBOT;
 
+bool newData = false;  // Flag for new data
+
 typedef struct __attribute__((packed)) {
   uint8_t Header[2];
 
@@ -34,38 +36,61 @@ typedef struct __attribute__((packed)) {
 } ControllerData;
 
 ControllerData data;
- 
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+
+#include "driver/uart.h"
+
+#define UART_PORT UART_NUM_1  // ใช้ UART1
+#define TXD_PIN 13
+#define RXD_PIN 12
+#define BUF_SIZE 1024
+
+void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   memcpy(&data, incomingData, sizeof(data));
-  Serial.print("LX: ");
-  Serial.print(data.stickValue[0]);
-  Serial.print(" | LY: ");
-  Serial.print(data.stickValue[1]);
-  Serial.print(" | RX: ");
-  Serial.print(data.stickValue[2]);
-  Serial.print(" | RY: ");
-  Serial.print(data.stickValue[3]);
-  Serial.print(" ||| ");
-  Serial.print(data.moveBtnBit.move1);
-  Serial.print(" | ");
-  Serial.print(data.moveBtnBit.move2);
-  Serial.print(" | ");
-  Serial.print(data.moveBtnBit.move3);
-  Serial.print(" | ");
-  Serial.print(data.moveBtnBit.move4);
-  Serial.print(" | ");
-  Serial.print(data.moveBtnBit.set1);
-  Serial.print(" | ");
-  Serial.print(data.moveBtnBit.set2);
-  Serial.println("");
+  newData = true;
 }
- 
+
 void setup() {
+  Serial.begin(115200);
   ROBOT.Setup_receive_ESPNOW();
+
+  // ติดตั้ง UART driver
+  uart_driver_install(UART_PORT, 256, 256, 0, NULL, 0);
+
+  // ตั้งค่าขา TX, RX สำหรับ UART1
+  uart_set_pin(UART_PORT, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+
+  // ตั้งค่า Baudrate
+  uart_set_baudrate(UART_PORT, 115200);
+
   // Register callback function
   esp_now_register_recv_cb(OnDataRecv);
 }
- 
+
 void loop() {
- 
+  if (newData) {
+    newData = false;  
+    
+    Serial.print("LX: ");
+    Serial.print(data.stickValue[0]);
+    Serial.print(" | LY: ");
+    Serial.print(data.stickValue[1]);
+    Serial.print(" | RX: ");
+    Serial.print(data.stickValue[2]);
+    Serial.print(" | RY: ");
+    Serial.print(data.stickValue[3]);
+    Serial.print(" ||| ");
+    Serial.print(data.moveBtnBit.move1);
+    Serial.print(" | ");
+    Serial.print(data.moveBtnBit.move2);
+    Serial.print(" | ");
+    Serial.print(data.moveBtnBit.move3);
+    Serial.print(" | ");
+    Serial.print(data.moveBtnBit.move4);
+    Serial.print(" | ");
+    Serial.print(data.moveBtnBit.set1);
+    Serial.print(" | ");
+    Serial.println(data.moveBtnBit.set2);
+
+    uart_write_bytes(UART_PORT, (uint8_t *)&data, sizeof(data));
+  }
 }

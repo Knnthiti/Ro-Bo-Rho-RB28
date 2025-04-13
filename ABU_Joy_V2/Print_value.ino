@@ -1,18 +1,20 @@
 void Serial_print() {
-  // Serial.print("LX: ");    Serial.print(value_[0]);
-  // Serial.print(" | LY: "); Serial.print(value_[1]);
-  // Serial.print(" | RX: "); Serial.print(value_[2]);
-  // Serial.print(" | RY: "); Serial.print(value_[3]);
-  // Serial.print(" ||| ");
-  Serial.print("LX: ");
-  Serial.print(data.stickValue[0]);
-  Serial.print(" | LY: ");
-  Serial.print(data.stickValue[1]);
-  Serial.print(" | RX: ");
-  Serial.print(data.stickValue[2]);
-  Serial.print(" | RY: ");
-  Serial.print(data.stickValue[3]);
+  Serial.print("LX: ");    Serial.print(value_[0]);
+  Serial.print(" | LY: "); Serial.print(value_[1]);
+  Serial.print(" | RX: "); Serial.print(value_[2]);
+  Serial.print(" | RY: "); Serial.print(value_[3]);
   Serial.print(" ||| ");
+
+  // Serial.print("LX: ");
+  // Serial.print(data.stickValue[0]);
+  // Serial.print(" | LY: ");
+  // Serial.print(data.stickValue[1]);
+  // Serial.print(" | RX: ");
+  // Serial.print(data.stickValue[2]);
+  // Serial.print(" | RY: ");
+  // Serial.print(data.stickValue[3]);
+  // Serial.print(" ||| ");
+
   Serial.print(data.moveBtnBit.move1);
   Serial.print(" | ");
   Serial.print(data.moveBtnBit.move2);
@@ -29,7 +31,7 @@ void Serial_print() {
 
 void drawBarWithPixels(int x, int y, int8_t value) {
   int length = map(value, -100, 100, -50, 50);  // แปลงค่าเป็น -50 ถึง 50
-  int midX = x + 50; // ตำแหน่งศูนย์กลาง
+  int midX = x + 50;                            // ตำแหน่งศูนย์กลาง
 
   // เส้นแกนกลาง
   for (int i = 0; i < 8; i++) {
