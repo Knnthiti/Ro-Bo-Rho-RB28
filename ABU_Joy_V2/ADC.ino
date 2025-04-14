@@ -29,8 +29,8 @@ void ReadValue(int8_t Value_OUT[]){
   // Value_OUT[2] = value_stick[3];
   // Value_OUT[3] = value_stick[2];
 
-  Value_OUT[0] = map(value_stick[1], 70, 3965, 100, -100);
-  Value_OUT[1] = map(value_stick[0], 200, 3950, -100, 100);
+  Value_OUT[0] = map(value_stick[0], 40, 3965, 100, -100);
+  Value_OUT[1] = map(value_stick[1], 200, 3950, -100, 100);
   Value_OUT[2] = map(value_stick[3], 185, 4095, -100, 100);
   Value_OUT[3] = map(value_stick[2], 225, 3930, 100, -100);
 

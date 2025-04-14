@@ -1,19 +1,19 @@
 void Serial_print() {
-  Serial.print("LX: ");    Serial.print(value_[0]);
-  Serial.print(" | LY: "); Serial.print(value_[1]);
-  Serial.print(" | RX: "); Serial.print(value_[2]);
-  Serial.print(" | RY: "); Serial.print(value_[3]);
-  Serial.print(" ||| ");
-
-  // Serial.print("LX: ");
-  // Serial.print(data.stickValue[0]);
-  // Serial.print(" | LY: ");
-  // Serial.print(data.stickValue[1]);
-  // Serial.print(" | RX: ");
-  // Serial.print(data.stickValue[2]);
-  // Serial.print(" | RY: ");
-  // Serial.print(data.stickValue[3]);
+  // Serial.print("LX: ");    Serial.print(value_[0]);
+  // Serial.print(" | LY: "); Serial.print(value_[1]);
+  // Serial.print(" | RX: "); Serial.print(value_[2]);
+  // Serial.print(" | RY: "); Serial.print(value_[3]);
   // Serial.print(" ||| ");
+
+  Serial.print("LX: ");
+  Serial.print(data.stickValue[0]);
+  Serial.print(" | LY: ");
+  Serial.print(data.stickValue[1]);
+  Serial.print(" | RX: ");
+  Serial.print(data.stickValue[2]);
+  Serial.print(" | RY: ");
+  Serial.print(data.stickValue[3]);
+  Serial.print(" ||| ");
 
   Serial.print(data.moveBtnBit.move1);
   Serial.print(" | ");
