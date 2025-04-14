@@ -40,3 +40,4 @@ void ReadValue(int8_t Value_OUT[]){
     }
   }
 }
+
