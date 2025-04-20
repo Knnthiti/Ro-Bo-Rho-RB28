@@ -2,15 +2,14 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
 
-#include <driver/adc.h>
-
-#include <espnow_ROBOT.h>
-
 // OLED Display object
 Adafruit_SH1106G display = Adafruit_SH1106G(128, 64, &Wire);
 
-uint8_t broadAddress[6] = { 0x34, 0xB7, 0xDA, 0x52, 0xF3, 0xBC };
-// uint8_t broadAddress[6] = { 0xF4, 0x65, 0x0B, 0x55, 0xD0, 0xCC };
+#include <espnow_ROBOT.h>
+
+uint8_t broadAddress[6] = { 0x34, 0xB7, 0xDA, 0x52, 0xF3, 0xBC }; //ROBOT_1
+// uint8_t broadAddress[6] = { 0xB4, 0x3A, 0x45, 0xAD, 0x5D, 0xC4 }; //ROBOT_2
+
 ESPNOW_ROBOT joy(broadAddress);
 
 
@@ -53,12 +52,8 @@ void setup() {
   //setup_ADC
   SetupADC();
 
-  pinMode(15, INPUT_PULLUP);
-  pinMode(14, INPUT_PULLUP);
-  pinMode(27, INPUT_PULLUP);
-  pinMode(26, INPUT_PULLUP);
-  pinMode(25, INPUT_PULLUP);
-  pinMode(18, INPUT_PULLUP);
+  //Setup_GPIO
+  SetupGPIO_PULLUP();
 
   Serial.begin(115200);
 
@@ -83,13 +78,13 @@ void loop() {
   // ReadValue(value_);
   ReadValue(data.stickValue);
 
-  data.moveBtnBit.move1 = digitalRead(15);
-  data.moveBtnBit.move2 = digitalRead(14);
-  data.moveBtnBit.move1 = digitalRead(27);
-  data.moveBtnBit.move1 = digitalRead(26);
+  data.moveBtnBit.move1 = gpio_get_level((gpio_num_t)GPIO_NUM_15); //digitalRead(15);
+  data.moveBtnBit.move2 = gpio_get_level((gpio_num_t)GPIO_NUM_13); //digitalRead(13);
+  data.moveBtnBit.move3 = gpio_get_level((gpio_num_t)GPIO_NUM_12); //digitalRead(12);
+  data.moveBtnBit.move4 = gpio_get_level((gpio_num_t)GPIO_NUM_14); //digitalRead(14);
 
-  data.moveBtnBit.set1 = digitalRead(25);
-  data.moveBtnBit.set2 = digitalRead(18);
+  data.moveBtnBit.set1 = gpio_get_level((gpio_num_t)GPIO_NUM_2);   //digitalRead(2);
+  data.moveBtnBit.set2 = gpio_get_level((gpio_num_t)GPIO_NUM_4);   //digitalRead(4);
 
   Serial_print();
   OLED_print();
