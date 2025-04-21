@@ -46,7 +46,7 @@ ControllerData data;
 
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
   memcpy(&data, incomingData, sizeof(data));
-  newData = true;
+  newData = 1;
 }
 
 void setup() {
@@ -68,28 +68,30 @@ void setup() {
 
 void loop() {
   if (newData) {
-    newData = false;  
+    newData = 0;  
     
-    Serial.print("LX: ");
-    Serial.print(data.stickValue[0]);
-    Serial.print(" | LY: ");
-    Serial.print(data.stickValue[1]);
-    Serial.print(" | RX: ");
-    Serial.print(data.stickValue[2]);
-    Serial.print(" | RY: ");
-    Serial.print(data.stickValue[3]);
-    Serial.print(" ||| ");
-    Serial.print(data.moveBtnBit.move1);
-    Serial.print(" | ");
-    Serial.print(data.moveBtnBit.move2);
-    Serial.print(" | ");
-    Serial.print(data.moveBtnBit.move3);
-    Serial.print(" | ");
-    Serial.print(data.moveBtnBit.move4);
-    Serial.print(" | ");
-    Serial.print(data.moveBtnBit.set1);
-    Serial.print(" | ");
-    Serial.println(data.moveBtnBit.set2);
+    Serial.write((uint8_t *)&data, sizeof(data));
+
+    // Serial.print("LX: ");
+    // Serial.print(data.stickValue[0]);
+    // Serial.print(" | LY: ");
+    // Serial.print(data.stickValue[1]);
+    // Serial.print(" | RX: ");
+    // Serial.print(data.stickValue[2]);
+    // Serial.print(" | RY: ");
+    // Serial.print(data.stickValue[3]);
+    // Serial.print(" ||| ");
+    // Serial.print(data.moveBtnBit.move1);
+    // Serial.print(" | ");
+    // Serial.print(data.moveBtnBit.move2);
+    // Serial.print(" | ");
+    // Serial.print(data.moveBtnBit.move3);
+    // Serial.print(" | ");
+    // Serial.print(data.moveBtnBit.move4);
+    // Serial.print(" | ");
+    // Serial.print(data.moveBtnBit.set1);
+    // Serial.print(" | ");
+    // Serial.println(data.moveBtnBit.set2);
 
     uart_write_bytes(UART_PORT, (uint8_t *)&data, sizeof(data));
   }

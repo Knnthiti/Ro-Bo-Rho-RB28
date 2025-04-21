@@ -26,6 +26,14 @@ void Serial_print() {
   Serial.print(data.moveBtnBit.set1);
   Serial.print(" | ");
   Serial.print(data.moveBtnBit.set2);
+  Serial.print(" || ");
+  Serial.print(data.attackBtnBit.attack1);
+  Serial.print(" | ");
+  Serial.print(data.attackBtnBit.attack2);
+  Serial.print(" | ");
+  Serial.print(data.attackBtnBit.attack3);
+  Serial.print(" | ");
+  Serial.print(data.attackBtnBit.attack4);
   Serial.println("");
 }
 
