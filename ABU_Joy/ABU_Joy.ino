@@ -6,8 +6,10 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 ABU_Joy Joy;
 
 byte error_PS = 1;
+
 byte type_PS = 0;
 
+byte test = 0;
 #define PS2_DAT 19  // MISO 19
 #define PS2_CMD 23  // MOSI 23
 #define PS2_SEL 5   // SS   5
