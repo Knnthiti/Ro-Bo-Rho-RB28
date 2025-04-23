@@ -68,8 +68,8 @@ void setup() {
 
 void loop() {
   if (newData) {
-    newData = 0;  
-    
+    newData = 0;
+
     Serial.write((uint8_t *)&data, sizeof(data));
 
     // Serial.print("LX: ");
