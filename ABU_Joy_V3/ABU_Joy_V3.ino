@@ -1,16 +1,3 @@
-#include <espnow_ROBOT.h>
-
-#define ROBOT_1
-
-// #ifdef ROBOT_1
-// uint8_t broadAddress[6] = { 0x34, 0xB7, 0xDA, 0x52, 0xF3, 0xBC };  //ROBOT_1
-// #else
-uint8_t broadAddress[6] = { 0xB4, 0x3A, 0x45, 0xAD, 0x5B, 0xF8 };  //ROBOT_2
-// #endif
-// uint8_t broadAddress[6] = { 0x5C, 0x01, 0x3B, 0x33, 0xD0, 0x6C }; //สำรอง
-ESPNOW_ROBOT joy(broadAddress);
-
-
 typedef struct __attribute__((packed)) {
   uint8_t Header[2] = { 'R', 'B' };
 
@@ -44,38 +31,23 @@ typedef struct __attribute__((packed)) {
 
 ControllerData data;
 
-int16_t value_[4] = { 0 };
-
 void setup() {
-  //setup_ADC
   SetupADC();
 
-  //Setup_GPIO
-  SetupGPIO_PULLUP();
-
   Serial.begin(115200);
-
-  //Setup_espnow
-  joy.Setup_send_ESPNOW();
-
-  OLED_Setup();
 }
 
+
 void loop() {
-  // ReadValue(value_);
   ReadValue(data.stickValue);
-#ifdef ROBOT_1
-  ROBOT_1_Game_Play();
-#else
-  ROBOT_2_Game_Play();
-#endif
 
-  Serial_print();
-
-  // OLED_print();
-  OLED_Display();
-
-  delay(10);
-
-  joy.Sendvalue_ESPNOW((uint8_t*)&data, sizeof(data));
+  Serial.print("LX: ");
+  Serial.print(data.stickValue[0]);
+  Serial.print(" | LY: ");
+  Serial.print(data.stickValue[1]);
+  Serial.print(" | RX: ");
+  Serial.print(data.stickValue[2]);
+  Serial.print(" | RY: ");
+  Serial.print(data.stickValue[3]);
+  Serial.println(" ||| ");
 }

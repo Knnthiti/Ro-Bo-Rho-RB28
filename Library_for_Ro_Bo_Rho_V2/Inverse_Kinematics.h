@@ -39,6 +39,4 @@ float get_w_LB();
 float get_w_RF();
 float get_w_RB();
 
-float map(float value, float fromLow, float fromHigh, float toLow, float toHigh);
-
 #endif /* INVERSE_KINEMATICS_H_ */

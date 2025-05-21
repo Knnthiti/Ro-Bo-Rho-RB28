@@ -12,7 +12,7 @@ public:
   boolean move[4];
   boolean attack[8];
   boolean seting[2];
-  uint8_t stickValues[4];
+  int8_t stickValues[4];
 
   uint8_t error = 1;
   uint8_t type = 0;
@@ -22,7 +22,7 @@ public:
     boolean move[4];
     boolean attack[8];
     boolean seting[2];
-    uint8_t stickValues[4];
+    int8_t stickValues[4];
   } Str_PS2;
 
   Joy() {}

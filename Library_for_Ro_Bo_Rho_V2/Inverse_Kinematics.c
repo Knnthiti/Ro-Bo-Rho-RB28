@@ -59,7 +59,3 @@ float get_w_RF(){
 float get_w_RB(){
 	return w_RB;
 }
-
-float map(float value, float fromLow, float fromHigh, float toLow, float toHigh) {
-    return toLow + (toHigh - toLow) * ((value - fromLow) / (fromHigh - fromLow));
-}

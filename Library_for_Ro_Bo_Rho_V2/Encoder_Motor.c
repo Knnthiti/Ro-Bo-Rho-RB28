@@ -24,6 +24,13 @@ TIM_HandleTypeDef *EXTRA2_PWM; //_TIM_10_CH1
 
 
 ///////////////////////////////////////////////////////////Setup_MOTOR/////////////////////////////////////////////////////
+Motor_feedback _Motor;
+
+Setup_Speed_Motor _Setup = {
+    ._freq = 100,
+    .CPR = 68,
+    .Gear_Ratio = 27
+};
 
 int16_t DutyCycle_LF_MAX = 0;
 int16_t DutyCycle_LB_MAX = 0;
@@ -130,35 +137,24 @@ void Motor_setup_EXTRA2(TIM_HandleTypeDef *_TIM_10_CH1  ,TIM_HandleTypeDef *_TIM
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////PID///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////RPM///////////////////////////////////////////////////////////////
 
-int16_t getCount(TIM_HandleTypeDef *TIM){
-	int16_t count = ((int16_t)(TIM->Instance->CNT));
+int16_t getCount(TIM_HandleTypeDef *TIM ,motor_Wheel _Wheel){
+	_Motor._Count[_Wheel] = ((int16_t)(TIM->Instance->CNT));
 
-	return count;
-}
-
-int16_t Present_Count[6] = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
-int16_t Past_Count[6] = {0 ,0 ,0 ,0 ,0 ,0};    //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
-
-uint16_t _freq = 100;
-
-float _RPM[6] = {0 ,0 ,0 ,0 ,0 ,0}; //Speed   //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
-
-uint16_t CPR = 68;
-
-void Setup_CPR(uint16_t _CPR){
-	CPR = _CPR;
-}
-
-uint16_t Gear_Ratio = 27;
-
-void Setup_Gear_Ratio(uint16_t _Gear_Ratio){
-	Gear_Ratio = _Gear_Ratio;
+	return _Motor._Count[_Wheel];
 }
 
 void Setup_frequency_Motor(uint16_t freq){
-	_freq = freq;
+	_Setup._freq = freq;
+}
+
+void Setup_CPR(uint16_t _CPR){
+	_Setup.CPR = _CPR;
+}
+
+void Setup_Gear_Ratio(uint16_t _Gear_Ratio){
+	_Setup.Gear_Ratio = _Gear_Ratio;
 }
 
 float getRPM_to_Rad_s(float RPM){
@@ -173,19 +169,22 @@ float getRad_s_to_RPM(float Rad_s){
 	return RPM__;
 }
 
-float getRPM_TIM_Wheel(TIM_HandleTypeDef *TIM ,uint8_t _Wheel){
-	Present_Count[_Wheel] = (int16_t)getCount(TIM);
+
+int16_t Present_Count[6] = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
+int16_t Past_Count[6] = {0 ,0 ,0 ,0 ,0 ,0};    //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
+float getRPM_TIM_Wheel(TIM_HandleTypeDef *TIM ,motor_Wheel _Wheel){
+	Present_Count[_Wheel] = (int16_t)getCount(TIM ,_Wheel);
 
 	// V = count/t = count*freq
-	_RPM[_Wheel] = (float)((int16_t)(Present_Count[_Wheel] - Past_Count[_Wheel]) * _freq);
-	_RPM[_Wheel] = (float)(((_RPM[_Wheel]* 60.0f)/CPR )/Gear_Ratio);
+	_Motor._RPM[_Wheel] = (float)((int16_t)(Present_Count[_Wheel] - Past_Count[_Wheel]) * _Setup._freq);
+	_Motor._RPM[_Wheel] = (float)(((_Motor._RPM[_Wheel]* 60.0f)/_Setup.CPR )/_Setup.Gear_Ratio);
 
 	Past_Count[_Wheel] = Present_Count[_Wheel];
 
-	return _RPM[_Wheel];
+	return _Motor._RPM[_Wheel];
 }
 
-
+/////////////////////////////////////////////////////////////////PID//////////////////////////////////////////////////////////////////////
 float Kp_Wheel[6] = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
 float Ki_Wheel[6] = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
 float Kd_Wheel[6] = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
@@ -194,58 +193,13 @@ float min_speed[6] = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
 float max_speed[6] = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
 
 
-void Setup_PID_LF(float Kp_LF ,float Ki_LF ,float Kd_LF ,float min_speed_LF ,float max_speed_LF){
-	Kp_Wheel[0] = Kp_LF;
-	Ki_Wheel[0] = Ki_LF;
-	Kd_Wheel[0] = Kd_LF;
+void Setup_PID_Wheel(float Kp ,float Ki ,float Kd ,float _min_speed ,float _max_speed ,motor_Wheel _Wheel){
+	Kp_Wheel[_Wheel] = Kp;
+	Ki_Wheel[_Wheel] = Ki;
+	Kd_Wheel[_Wheel] = Kd;
 
-	min_speed[0] = min_speed_LF;
-	max_speed[0] = max_speed_LF;
-}
-
-void Setup_PID_LB(float Kp_LB ,float Ki_LB ,float Kd_LB ,float min_speed_LB ,float max_speed_LB){
-	Kp_Wheel[1] = Kp_LB;
-	Ki_Wheel[1] = Ki_LB;
-	Kd_Wheel[1] = Kd_LB;
-
-	min_speed[1] = min_speed_LB;
-	max_speed[1] = max_speed_LB;
-}
-
-void Setup_PID_RF(float Kp_RF ,float Ki_RF ,float Kd_RF ,float min_speed_RF ,float max_speed_RF){
-	Kp_Wheel[2] = Kp_RF;
-	Ki_Wheel[2] = Ki_RF;
-	Kd_Wheel[2] = Kd_RF;
-
-	min_speed[2] = min_speed_RF;
-	max_speed[2] = max_speed_RF;
-}
-
-void Setup_PID_RB(float Kp_RB ,float Ki_RB ,float Kd_RB ,float min_speed_RB ,float max_speed_RB){
-	Kp_Wheel[3] = Kp_RB;
-	Ki_Wheel[3] = Ki_RB;
-	Kd_Wheel[3] = Kd_RB;
-
-	min_speed[3] = min_speed_RB;
-	max_speed[3] = max_speed_RB;
-}
-
-void Setup_PID_EXTRA1(float Kp_EXTRA1 ,float Ki_EXTRA1 ,float Kd_EXTRA1 ,float min_speed_EXTRA1 ,float max_speed_EXTRA1){
-	Kp_Wheel[4] = Kp_EXTRA1;
-	Ki_Wheel[4] = Ki_EXTRA1;
-	Kd_Wheel[4] = Kd_EXTRA1;
-
-	min_speed[4] = min_speed_EXTRA1;
-	max_speed[4] = max_speed_EXTRA1;
-}
-
-void Setup_PID_EXTRA2(float Kp_EXTRA2 ,float Ki_EXTRA2 ,float Kd_EXTRA2 ,float min_speed_EXTRA2 ,float max_speed_EXTRA2){
-	Kp_Wheel[5] = Kp_EXTRA2;
-	Ki_Wheel[5] = Ki_EXTRA2;
-	Kd_Wheel[5] = Kd_EXTRA2;
-
-	min_speed[5] = min_speed_EXTRA2;
-	max_speed[5] = max_speed_EXTRA2;
+	min_speed[_Wheel] = _min_speed;
+	max_speed[_Wheel] = _max_speed;
 }
 
 
@@ -258,19 +212,7 @@ float Derivative[6]   = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
 
 float Past_Error[6]   = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
 
-float Output_PID[6]    = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
-
-float PID_Speed(float _Setpoint ,int16_t RPM ,uint8_t _Wheel){
-//	switch (_Wheel) {
-//	  case 0 : getRPM_TIM_Wheel(EN_LF ,LF ); break;
-//	  case 1 : getRPM_TIM_Wheel(EN_LB ,LB ); break;
-//	  case 2 : getRPM_TIM_Wheel(EN_RF ,RF ); break;
-//	  case 3 : getRPM_TIM_Wheel(EN_RB ,RB ); break;
-//	  case 4 : getRPM_TIM_Wheel(EN_X ,EXTRA1 ); break;
-//	  case 5 : getRPM_TIM_Wheel(EN_Y ,EXTRA2 ); break;
-//	}
-
-//	Error_Speed[_Wheel] = _Setpoint-_RPM[_Wheel];
+float PID_Speed(float _Setpoint ,float RPM ,motor_Wheel _Wheel){
 	Error_Speed[_Wheel] = _Setpoint-RPM;
 
 	Proportional[_Wheel] = Error_Speed[_Wheel];
@@ -279,10 +221,10 @@ float PID_Speed(float _Setpoint ,int16_t RPM ,uint8_t _Wheel){
 
 	Past_Error[_Wheel] = Error_Speed[_Wheel];
 
-	Output_PID[_Wheel]  = (float)((Proportional[_Wheel]*Kp_Wheel[_Wheel]) + (Integnator[_Wheel]*Ki_Wheel[_Wheel]) + (Derivative[_Wheel]*Kd_Wheel[_Wheel]));
+	_Motor._PID[_Wheel]  = (float)((Proportional[_Wheel]*Kp_Wheel[_Wheel]) + (Integnator[_Wheel]*Ki_Wheel[_Wheel]) + (Derivative[_Wheel]*Kd_Wheel[_Wheel]));
 
 
-	return Output_PID[_Wheel];
+	return _Motor._PID[_Wheel];
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -402,12 +344,11 @@ float Motor_Speed_LF(int16_t RPM_INPUT ,float RPM_LF){
 
 	PID_Speed(RPM_INPUT ,RPM_LF , 0);
 
-	Duty_Cycle[0] = (int16_t)((Output_PID[0] / ((float)(max_speed[0] - min_speed[0]))) * DutyCycle_LF_MAX);
+	Duty_Cycle[0] = (int16_t)((_Motor._PID[0] / ((float)(max_speed[0] - min_speed[0]))) * DutyCycle_LF_MAX);
 
 	Motor_DutyCycle_LF(Duty_Cycle[0]);
 
-//	return _RPM[0];
-	return Output_PID[0];
+	return _Motor._PID[0];
 }
 
 float Motor_Speed_LB(int16_t RPM_INPUT ,float RPM_LB){
@@ -419,12 +360,11 @@ float Motor_Speed_LB(int16_t RPM_INPUT ,float RPM_LB){
 
 	PID_Speed(RPM_INPUT ,RPM_LB ,1);
 
-	Duty_Cycle[1] = (int16_t)((Output_PID[1]/((float)(max_speed[1] - min_speed[1]))) * DutyCycle_LB_MAX);
+	Duty_Cycle[1] = (int16_t)((_Motor._PID[1]/((float)(max_speed[1] - min_speed[1]))) * DutyCycle_LB_MAX);
 
 	Motor_DutyCycle_LB(Duty_Cycle[1]);
 
-//	return _RPM[1];
-	return Output_PID[1];
+	return _Motor._PID[1];
 }
 
 float Motor_Speed_RF(int16_t RPM_INPUT ,float RPM_RF){
@@ -436,12 +376,11 @@ float Motor_Speed_RF(int16_t RPM_INPUT ,float RPM_RF){
 
 	PID_Speed(RPM_INPUT ,RPM_RF ,2);
 
-	Duty_Cycle[2] = (int16_t)((Output_PID[2]/((float)(max_speed[2] - min_speed[2]))) * DutyCycle_RF_MAX);
+	Duty_Cycle[2] = (int16_t)((_Motor._PID[2]/((float)(max_speed[2] - min_speed[2]))) * DutyCycle_RF_MAX);
 
 	Motor_DutyCycle_RF(Duty_Cycle[2]);
 
-//	return _RPM[2];
-	return Output_PID[2];
+	return _Motor._PID[2];
 }
 
 float Motor_Speed_RB(int16_t RPM_INPUT ,float RPM_RB){
@@ -453,12 +392,11 @@ float Motor_Speed_RB(int16_t RPM_INPUT ,float RPM_RB){
 
 	PID_Speed(RPM_INPUT ,RPM_RB ,3);
 
-	Duty_Cycle[3] = (int16_t)((Output_PID[3]/((float)(max_speed[3] - min_speed[3]))) * DutyCycle_RB_MAX);
+	Duty_Cycle[3] = (int16_t)((_Motor._PID[3]/((float)(max_speed[3] - min_speed[3]))) * DutyCycle_RB_MAX);
 
 	Motor_DutyCycle_RB(Duty_Cycle[3]);
 
-//	return _RPM[3];
-	return Output_PID[3];
+	return _Motor._PID[3];
 }
 
 float Motor_Speed_EXTRA1(int16_t RPM_INPUT ,float RPM_EXTRA1){
@@ -470,12 +408,11 @@ float Motor_Speed_EXTRA1(int16_t RPM_INPUT ,float RPM_EXTRA1){
 
 	PID_Speed(RPM_INPUT ,RPM_EXTRA1 ,4);
 
-	Duty_Cycle[4] = (int16_t)((Output_PID[4]/((float)(max_speed[4] - min_speed[4]))) * DutyCycle_EXTRA1_MAX);
+	Duty_Cycle[4] = (int16_t)((_Motor._PID[4]/((float)(max_speed[4] - min_speed[4]))) * DutyCycle_EXTRA1_MAX);
 
 	Motor_DutyCycle_EXTRA1(Duty_Cycle[4]);
 
-//	return _RPM[4];
-	return Output_PID[4];
+	return _Motor._PID[4];
 }
 
 float Motor_Speed_EXTRA2(int16_t RPM_INPUT ,float RPM_EXTRA2){
@@ -487,12 +424,11 @@ float Motor_Speed_EXTRA2(int16_t RPM_INPUT ,float RPM_EXTRA2){
 
 	PID_Speed(RPM_INPUT ,RPM_EXTRA2 ,5);
 
-	Duty_Cycle[5] = (int16_t)((Output_PID[5]/((float)(max_speed[5] - min_speed[5]))) * DutyCycle_EXTRA2_MAX);
+	Duty_Cycle[5] = (int16_t)((_Motor._PID[5]/((float)(max_speed[5] - min_speed[5]))) * DutyCycle_EXTRA2_MAX);
 
 	Motor_DutyCycle_EXTRA2(Duty_Cycle[5]);
 
-//	return _RPM[5];
-	return Output_PID[5];
+	return _Motor._PID[5];
 }
 
 void digitalWrite(char* _PIN , uint8_t vlue){
@@ -594,6 +530,10 @@ void digitalWrite(char* _PIN , uint8_t vlue){
 	            case 15: HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, vlue); break;
 	        }
 	    }
+}
+
+float map(float value, float fromLow, float fromHigh, float toLow, float toHigh) {
+    return toLow + (toHigh - toLow) * ((value - fromLow) / (fromHigh - fromLow));
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

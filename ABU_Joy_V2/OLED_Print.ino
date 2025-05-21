@@ -16,7 +16,7 @@ void Movement_Y_Axis_Starting_Point(int x_axis, int y_axis, int8_t value) {
 }
 
 void Movement_Y_Axis_Parameters(int x_axis, int y_axis, int8_t value) {
-  int Bar_Length = map(value, -100, 100, -18, 18);
+  int Bar_Length = map(value, 100, -100, -18, 18);
   if (Bar_Length > 0) {
     display.fillRect(x_axis, y_axis, 5, Bar_Length, SH110X_WHITE);
   } else {
@@ -25,7 +25,7 @@ void Movement_Y_Axis_Parameters(int x_axis, int y_axis, int8_t value) {
 }
 
 void Movement_X_Axis_Parameters(int x_axis, int y_axis, int8_t value) {
-  int Bar_Length = map(value, -100, 100, -18, 18);
+  int Bar_Length = map(value, 100, -100, -22, 22);
   if (Bar_Length > 0) {
     display.fillRect(x_axis, y_axis, Bar_Length, 5, SH110X_WHITE);
   } else {
@@ -106,7 +106,9 @@ void OLED_Display() {
   display.setCursor(0, 14);
   display.println("COMM");
   display.drawRect(8, 26, 8, 8, SH110X_WHITE);
-  display.fillRect(10, 28, 4, 4, SH110X_WHITE);
+  if(status_ESPNOW_Sent == 1){
+    display.fillRect(10, 28, 4, 4, SH110X_WHITE);
+  }
 
   display.setCursor(50, 0);
   display.println("LY :");
@@ -118,9 +120,10 @@ void OLED_Display() {
 
   display.setCursor(50, 28);
   display.println("RX :");
-  display.setCursor(90, 28);
-  sprintf(Movement_Rad_buffer, "%d", Rad);
-  display.println(Movement_Rad_buffer);
+  Movement_X_Axis_Starting_Point(100, 28, SH110X_WHITE);
+  // display.setCursor(90, 28);
+  // sprintf(Movement_Rad_buffer, "%d", Rad);
+  // display.println(Movement_Rad_buffer);
 
   display.setCursor(0, 44);
   display.println("A1");
@@ -154,11 +157,36 @@ void OLED_Display() {
   display.println("M4");
   display.drawRect(112, 57, 7, 7, SH110X_WHITE);
 
-  Button_Active_Display("A1");
-  Button_Active_Display("M1");
+  if(data.moveBtnBit.move1 == 1){
+    Button_Active_Display("M1");
+  }
+  if(data.moveBtnBit.move2 == 1){
+    Button_Active_Display("M2");
+  }
+  if(data.moveBtnBit.move3 == 1){
+    Button_Active_Display("M3");
+  }
+  if(data.moveBtnBit.move4 == 1){
+    Button_Active_Display("M4");
+  }
 
-  Movement_Y_Axis_Parameters(33, 18, Parameter_Test_Value);
-  Movement_X_Axis_Parameters(100, 1, 20);
-  Movement_X_Axis_Parameters(100, 15, -50);
+  if(data.attackBtnBit.attack1 == 1){
+    Button_Active_Display("A1");
+  }
+  if(data.attackBtnBit.attack2 == 1){
+    Button_Active_Display("A2");
+  }
+  if(data.attackBtnBit.attack3 == 1){
+    Button_Active_Display("A3");
+  }
+  if(data.attackBtnBit.attack4 == 1){
+    Button_Active_Display("A4");
+  }
+  
+
+  Movement_Y_Axis_Parameters(33, 18  ,data.stickValue[0]);
+  Movement_X_Axis_Parameters(100, 1  ,data.stickValue[1]);
+  Movement_X_Axis_Parameters(100, 15 ,data.stickValue[3]);
+  Movement_X_Axis_Parameters(100, 29 ,data.stickValue[2]);
   display.display();
 }

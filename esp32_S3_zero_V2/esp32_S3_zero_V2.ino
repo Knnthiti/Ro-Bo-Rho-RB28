@@ -2,7 +2,7 @@
 
 ESPNOW_ROBOT ROBOT;
 
-bool newData = false;  // Flag for new data
+bool newData = false;
 
 typedef struct __attribute__((packed)) {
   uint8_t Header[2];
@@ -70,28 +70,28 @@ void loop() {
   if (newData) {
     newData = 0;
 
-    Serial.write((uint8_t *)&data, sizeof(data));
+    // Serial.write((uint8_t *)&data, sizeof(data));
 
-    // Serial.print("LX: ");
-    // Serial.print(data.stickValue[0]);
-    // Serial.print(" | LY: ");
-    // Serial.print(data.stickValue[1]);
-    // Serial.print(" | RX: ");
-    // Serial.print(data.stickValue[2]);
-    // Serial.print(" | RY: ");
-    // Serial.print(data.stickValue[3]);
-    // Serial.print(" ||| ");
-    // Serial.print(data.moveBtnBit.move1);
-    // Serial.print(" | ");
-    // Serial.print(data.moveBtnBit.move2);
-    // Serial.print(" | ");
-    // Serial.print(data.moveBtnBit.move3);
-    // Serial.print(" | ");
-    // Serial.print(data.moveBtnBit.move4);
-    // Serial.print(" | ");
-    // Serial.print(data.moveBtnBit.set1);
-    // Serial.print(" | ");
-    // Serial.println(data.moveBtnBit.set2);
+    Serial.print("LX: ");
+    Serial.print(data.stickValue[0]);
+    Serial.print(" | LY: ");
+    Serial.print(data.stickValue[1]);
+    Serial.print(" | RX: ");
+    Serial.print(data.stickValue[2]);
+    Serial.print(" | RY: ");
+    Serial.print(data.stickValue[3]);
+    Serial.print(" ||| ");
+    Serial.print(data.moveBtnBit.move1);
+    Serial.print(" | ");
+    Serial.print(data.moveBtnBit.move2);
+    Serial.print(" | ");
+    Serial.print(data.moveBtnBit.move3);
+    Serial.print(" | ");
+    Serial.print(data.moveBtnBit.move4);
+    Serial.print(" | ");
+    Serial.print(data.moveBtnBit.set1);
+    Serial.print(" | ");
+    Serial.println(data.moveBtnBit.set2);
 
     uart_write_bytes(UART_PORT, (uint8_t *)&data, sizeof(data));
   }

@@ -1,10 +1,18 @@
 #include "Joy_ps2.h"
 
-void Joy::structToArray() {
-  for (int i = 0; i < 4; ++i) move[i] = Str_PS2.move[i];
-  for (int i = 0; i < 8; ++i) attack[i] = Str_PS2.attack[i];
-  for (int i = 0; i < 2; ++i) seting[i] = Str_PS2.seting[i];
-  for (int i = 0; i < 4; ++i) stickValues[i] = Str_PS2.stickValues[i];
+void Joy ::structToArray() {
+  for (int i = 0; i < 4; ++i) {
+    move[i] = Str_PS2.move[i];
+  }
+  for (int i = 0; i < 8; ++i) {
+    attack[i] = Str_PS2.attack[i];
+  }
+  for (int i = 0; i < 2; ++i) {
+    seting[i] = Str_PS2.seting[i];
+  }
+  for (int i = 0; i < 4; ++i) {
+    stickValues[i] = Str_PS2.stickValues[i];
+  }
 }
 
 void Joy ::Setup_PS2(uint8_t _clk, uint8_t _cmd, uint8_t _att, uint8_t _dat) {
@@ -45,7 +53,7 @@ byte Joy ::PS2_type() {
   return type;
 }
 
-void Joy::PS2_readValue() {
+void Joy ::PS2_readValue() {
   if (type == 1) {
     read_gamepad(false, vibrate);
     Str_PS2.move[0] = ButtonPressed(PSB_PAD_UP);
@@ -63,25 +71,21 @@ void Joy::PS2_readValue() {
     Str_PS2.attack[7] = Button(PSB_R2);
 
     Str_PS2.seting[0] = ButtonPressed(PSB_SELECT);
-    Str_PS2.seting[1] = 1-Button(PSB_START);
+    Str_PS2.seting[1] = Button(PSB_START);
 
     vibrate = Analog(PSAB_BLUE);
 
-    // Str_PS2.stickValues[0] = map(Analog(PSS_LY), 255, 0, -128, 127);
-    // Str_PS2.stickValues[1] = map(Analog(PSS_LX), 255, 0, -128, 127);
-    // Str_PS2.stickValues[3] = map(Analog(PSS_RY), 255, 0, -128, 127);
-    // Str_PS2.stickValues[2] = map(Analog(PSS_RX), 255, 0, -128, 127);
-    
-    Str_PS2.stickValues[1] = Analog(PSS_LY);
-    Str_PS2.stickValues[0] = Analog(PSS_LX);
-    Str_PS2.stickValues[2] = Analog(PSS_RY);
-    Str_PS2.stickValues[3] = Analog(PSS_RX);
+    Str_PS2.stickValues[0] = map(Analog(PSS_LY), 255, 0, -100, 100);
+    Str_PS2.stickValues[1] = map(Analog(PSS_LX), 255, 0, -100, 100);
+    Str_PS2.stickValues[3] = map(Analog(PSS_RY), 255, 0, -100, 100);
+    Str_PS2.stickValues[2] = map(Analog(PSS_RX), 255, 0, -100, 100);
   }
 
   structToArray();
 }
 
-void Joy::print_PS2() {
+void Joy ::print_PS2() {
+  // structToArray();
   Serial.print("move ");
   for (int i = 0; i < 4; ++i) {
     Serial.print(move[i]);
@@ -109,14 +113,24 @@ void Joy::print_PS2() {
   Serial.println(" ");
 }
 
-void Joy::set_PS2_0() {
-  for (int i = 0; i < 4; ++i) Str_PS2.move[i] = 0;
-  for (int i = 0; i < 8; ++i) Str_PS2.attack[i] = 0;
-  for (int i = 0; i < 2; ++i) Str_PS2.seting[i] = 0;
-  for (int i = 0; i < 4; ++i) Str_PS2.stickValues[i] = 0;
+void Joy ::set_PS2_0() {
+  for (int i = 0; i < 4; ++i) {
+    Str_PS2.move[i] = 0;
+  }
+
+  for (int i = 0; i < 8; ++i) {
+    Str_PS2.attack[i] = 0;
+  }
+
+  for (int i = 0; i < 2; ++i) {
+    Str_PS2.seting[i] = 0;
+  }
+
+  for (int i = 0; i < 4; ++i) {
+    Str_PS2.stickValues[i] = 0;
+  }
   structToArray();
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////class ABU_Joy ///////////////////////////////////////////////////////////
@@ -172,7 +186,7 @@ void ABU_Joy ::Sendvalue_ESPNOW(uint8_t *data, size_t len) {
     Serial.println(" | Sending error");
 #endif
   }
-  delay(10);  //COMMUNICATION
+  // delay(10);  //COMMUNICATION
 }
 
 void ABU_Joy ::Joy_Sendvalue_ESPNOW() {
