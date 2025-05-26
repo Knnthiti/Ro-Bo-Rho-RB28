@@ -1,13 +1,8 @@
 #include <espnow_ROBOT.h>
 
-#define ROBOT_1
-
-// #ifdef ROBOT_1
-// uint8_t broadAddress[6] = { 0x34, 0xB7, 0xDA, 0x52, 0xF3, 0xBC };  //ROBOT_1
-// #else
-uint8_t broadAddress[6] = { 0xB4, 0x3A, 0x45, 0xAD, 0x5B, 0xF8 };  //ROBOT_2
-// #endif
+uint8_t broadAddress[6] = { 0x08, 0xD1, 0xF9, 0xE7, 0x10, 0x90 };  //ROBOT_1
 // uint8_t broadAddress[6] = { 0x5C, 0x01, 0x3B, 0x33, 0xD0, 0x6C }; //สำรอง
+
 ESPNOW_ROBOT joy(broadAddress);
 
 
@@ -44,6 +39,8 @@ typedef struct __attribute__((packed)) {
 
 ControllerData data;
 
+int16_t _Degree = 0;
+
 int16_t value_[4] = { 0 };
 
 void setup() {
@@ -64,11 +61,8 @@ void setup() {
 void loop() {
   // ReadValue(value_);
   ReadValue(data.stickValue);
-#ifdef ROBOT_1
+
   ROBOT_1_Game_Play();
-#else
-  ROBOT_2_Game_Play();
-#endif
 
   Serial_print();
 

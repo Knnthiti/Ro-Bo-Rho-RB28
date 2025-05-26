@@ -4,8 +4,6 @@
 
 Adafruit_SH1106G display = Adafruit_SH1106G(128, 64, &Wire);
 
-int Parameter_Test_Value = 100;
-int Rad = 111;
 char Movement_Rad_buffer[8];
 
 void Movement_Y_Axis_Starting_Point(int x_axis, int y_axis, int8_t value) {
@@ -120,10 +118,13 @@ void OLED_Display() {
 
   display.setCursor(50, 28);
   display.println("RX :");
-  Movement_X_Axis_Starting_Point(100, 28, SH110X_WHITE);
-  // display.setCursor(90, 28);
-  // sprintf(Movement_Rad_buffer, "%d", Rad);
-  // display.println(Movement_Rad_buffer);
+  /////////////////////////////////////////////////////////////////////////
+  // Movement_X_Axis_Starting_Point(100, 28, SH110X_WHITE);
+
+  display.setCursor(90, 28);
+  sprintf(Movement_Rad_buffer, "%d", _Degree);
+  display.println(Movement_Rad_buffer);
+  ////////////////////////////////////////////////////////////////////////
 
   display.setCursor(0, 44);
   display.println("A1");
@@ -187,6 +188,7 @@ void OLED_Display() {
   Movement_Y_Axis_Parameters(33, 18  ,data.stickValue[0]);
   Movement_X_Axis_Parameters(100, 1  ,data.stickValue[1]);
   Movement_X_Axis_Parameters(100, 15 ,data.stickValue[3]);
-  Movement_X_Axis_Parameters(100, 29 ,data.stickValue[2]);
+
+  // Movement_X_Axis_Parameters(100, 29 ,data.stickValue[2]);
   display.display();
 }
