@@ -8,6 +8,13 @@
 #ifndef ARDUINO_H_
 #define ARDUINO_H_
 
+#include "string.h"
+#include "stdint.h"
+#include "stdlib.h"
+
+#include "math.h"
+#include "stm32f4xx.h"
+
 #include "main.h"
 
 void digitalWrite(char* _PIN, uint8_t vlue);

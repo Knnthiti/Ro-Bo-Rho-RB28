@@ -40,8 +40,8 @@ ControllerData data;
 #include "driver/uart.h"
 
 #define UART_PORT UART_NUM_1  // ใช้ UART1
-#define TXD_PIN 13
-#define RXD_PIN 12
+#define TXD_PIN 17
+#define RXD_PIN 16
 #define BUF_SIZE 1024
 
 void OnDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
@@ -91,7 +91,16 @@ void loop() {
     Serial.print(" | ");
     Serial.print(data.moveBtnBit.set1);
     Serial.print(" | ");
-    Serial.println(data.moveBtnBit.set2);
+    Serial.print(data.moveBtnBit.set2);
+
+    Serial.print(data.attackBtnBit.attack1);
+    Serial.print(" | ");
+    Serial.print(data.attackBtnBit.attack2);
+    Serial.print(" | ");
+    Serial.print(data.attackBtnBit.attack3);
+    Serial.print(" | ");
+    Serial.print(data.attackBtnBit.attack4);
+    Serial.println(" | ");
 
     uart_write_bytes(UART_PORT, (uint8_t *)&data, sizeof(data));
   }

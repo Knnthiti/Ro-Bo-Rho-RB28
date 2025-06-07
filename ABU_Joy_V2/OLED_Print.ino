@@ -147,7 +147,7 @@ void OLED_Display() {
   display.drawRect(80, 44, 7, 7, SH110X_WHITE);
 
   display.setCursor(64, 57);
-  display.println("M2");
+  display.println("S1");
   display.drawRect(80, 57, 7, 7, SH110X_WHITE);
 
   display.setCursor(96, 44);
@@ -161,7 +161,7 @@ void OLED_Display() {
   if(data.moveBtnBit.move1 == 1){
     Button_Active_Display("M1");
   }
-  if(data.moveBtnBit.move2 == 1){
+  if(data.moveBtnBit.set1 == 1){
     Button_Active_Display("M2");
   }
   if(data.moveBtnBit.move3 == 1){

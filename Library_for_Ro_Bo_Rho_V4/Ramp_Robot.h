@@ -59,6 +59,13 @@ extern float Error_degree;
 void Setup_Ramp_Count(float Kp_Count ,float Ki_Count ,float Kd_Count,float max_Count ,float DutyCycle_MAX);
 float Count_to_degree(int32_t Count);
 float Degree_to_Count(float Degree);
+
+extern float Error_degree;
+extern float Proportiona_degree;
+extern float Integnator_degree;
+extern float Derivative_degree;
+extern float Past_Error_degree;
+
 int16_t Ramp_Count(float Set_degree ,float degree);
 
 #endif /* RAMP_ROBOT_H_ */

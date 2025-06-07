@@ -1,9 +1,18 @@
 #include <espnow_ROBOT.h>
 
-uint8_t broadAddress[6] = { 0x08, 0xD1, 0xF9, 0xE7, 0x10, 0x90 };  //ROBOT_1
-// uint8_t broadAddress[6] = { 0x5C, 0x01, 0x3B, 0x33, 0xD0, 0x6C }; //สำรอง
+#define ROBOT_1
 
+uint8_t broadAddress[6] = { 0x08, 0xD1, 0xF9, 0xE7, 0x1C, 0xD0 }; //ROBOT_1
 ESPNOW_ROBOT joy(broadAddress);
+
+// uint8_t broadAddress[6] = { 0xEC, 0x62, 0x60, 0x55, 0xF0, 0x04 }; //ROBOT_2
+// ESPNOW_ROBOT joy(broadAddress);
+
+// uint8_t broadAddress[6] = { 0x08, 0xD1, 0xF9, 0xE7, 0x10, 0x90 };  //ROBOT_2_1
+// ESPNOW_ROBOT joy(broadAddress);
+
+// uint8_t broadAddress[6] = { 0xF4, 0x65, 0x0B, 0x54, 0xEA, 0xC0 };  //ROBOT_2_2
+// ESPNOW_ROBOT joy(broadAddress);
 
 
 typedef struct __attribute__((packed)) {
@@ -62,8 +71,12 @@ void loop() {
   // ReadValue(value_);
   ReadValue(data.stickValue);
 
+  #ifdef ROBOT_1
   ROBOT_1_Game_Play();
-
+  #else
+  ROBOT_2_Game_Play();
+  #endif
+  
   Serial_print();
 
   // OLED_print();

@@ -349,7 +349,34 @@ void Motor_DutyCycle_EXTRA2(int16_t DutyCycle_EXTRA2){
 		 digitalWrite(IN_EXTRA2 ,0);
 	}
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+uint8_t PWM_Setup[2] = { 0 };
 
+PWM_num Num_PWM;
+
+void Motor_DutyCycle(TIM_HandleTypeDef *PIN_PWM, PWM_num num, char *DIGI,int16_t DutyCycle){
+	if (DutyCycle > 4095) {
+		DutyCycle = 4095;
+	} else if (DutyCycle < -4095) {
+		DutyCycle = -4095;
+	}
+//	if(PWM_Setup[num] == 0){
+//		if(num == 0)HAL_TIM_PWM_Start(PIN_PWM, TIM_CHANNEL_2);
+//		else if(num == 1)HAL_TIM_PWM_Start(PIN_PWM, TIM_CHANNEL_1);
+//		PWM_Setup[num] = 1;
+//	}
+
+	if(num == 0)PIN_PWM->Instance->CCR2 = (DutyCycle > 0) ? (int16_t)DutyCycle : (4095 + (int16_t)DutyCycle);
+	else if(num == 1)PIN_PWM->Instance->CCR1 = (DutyCycle > 0) ? (int16_t)DutyCycle : (4095 + (int16_t)DutyCycle);
+
+	digitalWrite(DIGI , (DutyCycle < 0) ? 1 : 0);
+
+	if(DutyCycle == 0){
+	   PIN_PWM->Instance->CCR2 = 0;
+	   digitalWrite(DIGI ,0);
+	}
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int16_t Duty_Cycle[6] = {0 ,0 ,0 ,0 ,0 ,0}; //LF ,LB ,RF ,RB ,EXTRA1 ,EXTRA2
 
 float Motor_Speed_LF(int16_t RPM_INPUT ,float RPM_LF){

@@ -34,7 +34,7 @@ void ReadValue(int8_t Value_OUT[]){
   ////////////////////////////ROBOT_1///////////////////////////////////
   Value_OUT[0] = map(value_stick[0], 390, 3280, -100, 100);
   Value_OUT[1] = map(value_stick[1], 390, 3150, -100, 100);
-  // Value_OUT[2] = map(value_stick[2], 415, 3255, -5, 5);
+  // Value_OUT[2] = map(value_stick[2], 415, 3255, -100, 100);
   Value_OUT[3] = map(value_stick[3], 345, 3315, -100, 100);
   ////////////////////////////ROBOT_1///////////////////////////////////
 
@@ -44,6 +44,12 @@ void ReadValue(int8_t Value_OUT[]){
     }
   }
 
-  Value_OUT[2] = map(value_stick[2], 415, 3255, -2, 2);
+  if(value_stick[2] < 600){
+    Value_OUT[2] = -1;
+  }else if(value_stick[2] > 3000){
+    Value_OUT[2] = 1;
+  }else{
+    Value_OUT[2] = 0;
+  }
 }
 
