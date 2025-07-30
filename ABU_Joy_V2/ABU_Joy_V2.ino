@@ -1,19 +1,13 @@
 #include <espnow_ROBOT.h>
 
-#define ROBOT_1
+// #define ROBOT_1
 
-uint8_t broadAddress[6] = { 0x08, 0xD1, 0xF9, 0xE7, 0x1C, 0xD0 }; //ROBOT_1
+// uint8_t broadAddress[6] = { 0xB4, 0x3A, 0x45, 0xAD, 0x5B, 0xF8 }; //ROBOT_1
+// ESPNOW_ROBOT joy(broadAddress);
+
+uint8_t broadAddress[6] = { 0xEC, 0x62, 0x60, 0x55, 0xF0, 0x04 }; //ROBOT_2
 ESPNOW_ROBOT joy(broadAddress);
-
-// uint8_t broadAddress[6] = { 0xEC, 0x62, 0x60, 0x55, 0xF0, 0x04 }; //ROBOT_2
-// ESPNOW_ROBOT joy(broadAddress);
-
-// uint8_t broadAddress[6] = { 0x08, 0xD1, 0xF9, 0xE7, 0x10, 0x90 };  //ROBOT_2_1
-// ESPNOW_ROBOT joy(broadAddress);
-
-// uint8_t broadAddress[6] = { 0xF4, 0x65, 0x0B, 0x54, 0xEA, 0xC0 };  //ROBOT_2_2
-// ESPNOW_ROBOT joy(broadAddress);
-
+// EC:62:60:55:F0:04
 
 typedef struct __attribute__((packed)) {
   uint8_t Header[2] = { 'R', 'B' };
@@ -79,7 +73,6 @@ void loop() {
   
   Serial_print();
 
-  // OLED_print();
   OLED_Display();
 
   delay(10);

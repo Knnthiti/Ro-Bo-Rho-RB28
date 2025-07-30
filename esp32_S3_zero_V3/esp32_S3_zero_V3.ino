@@ -37,9 +37,8 @@ typedef struct __attribute__((packed)) {
 
 ControllerData data;
 
-#include "driver/uart.h"
+#include <HardwareSerial.h>
 
-#define UART_PORT UART_NUM_1  // ใช้ UART2
 #define TXD_PIN 12
 #define RXD_PIN 13
 
@@ -52,14 +51,7 @@ void setup() {
   Serial.begin(115200);
   ROBOT.Setup_receive_ESPNOW();
 
-  // ติดตั้ง UART driver
-  uart_driver_install(UART_PORT, 256, 256, 0, NULL, 0);
-
-  // ตั้งค่าขา TX, RX สำหรับ UART1
-  uart_set_pin(UART_PORT, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
-
-  // ตั้งค่า Baudrate
-  uart_set_baudrate(UART_PORT, 115200);
+  Serial2.begin(115200, SERIAL_8N1, RXD_PIN, TXD_PIN);
 
   // Register callback function
   esp_now_register_recv_cb(OnDataRecv);
@@ -101,6 +93,6 @@ void loop() {
     Serial.print(" | ");
     Serial.println(data.attackBtnBit.attack4);
 
-    uart_write_bytes(UART_PORT, (uint8_t *)&data, sizeof(data));
+    Serial2.write((uint8_t *)&data, 8);
   }
 }
